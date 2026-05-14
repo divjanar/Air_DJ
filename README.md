@@ -1,114 +1,95 @@
 # 🎧 Air DJ
 
-Control a DJ interface using hand gestures through your webcam.
+Air DJ is a gesture-controlled DJ application that lets users control music using hand movements through a webcam. The project combines computer vision, real-time interaction, and audio controls to create a hands-free DJ experience.
 
-## Key Features
+---
 
-### **Controls**
+## ✨ Features
 
-| Control | Function | Behavior |
-|---------|----------|----------|
-| **🎯 CUE** | Jump to cue point | Seeks to beginning for preview |
-| **▶️ PLAY** | Start playback | Continues from current position |
-| **⏸️ PAUSE** | Pause playback | Maintains position for resume |
-| **🎤 VOCAL** | Toggle vocals | Real-time on/off at current position |
-| **🎶 INSTRUMENTAL** | Toggle instrumental | Real-time on/off at current position |
+- 🎵 Play and pause music with gestures
+- 🎤 Toggle vocals and instrumentals
+- 🎚️ Real-time track progress visualization
+- 📷 Webcam-based hand tracking
+- 🎛️ Interactive dual-deck DJ interface
 
-### **Visual Feedback**
-- **Track Progress Bars**: Real-time position with time display (mm:ss)
-- **Jog Wheel Indicators**: Moving position markers
-- **Stem Status Display**: Visual confirmation of vocal/instrumental state
-- **Independent Visualization**: Each deck shows separate progress
+---
 
-## Quick Start
+## 🛠️ Technologies Used
 
-### Prerequisites
-- **Python 3.9 - 3.12** (MediaPipe compatibility requirement)
-- **64-bit Operating System** (Windows/macOS/Linux)
-- **Webcam** (built-in or external)
-- **Audio files with stems** (see "Add Your Music" section below)
+- Python
+- MediaPipe
+- OpenCV
+- Pygame
 
-⚠️ **Important**: Python 3.13+ and Python 3.8 are not supported due to MediaPipe compatibility.
+---
 
-### Installation
+## 💻 Requirements
 
-#### **macOS / Linux**
+- Python 3.9 – 3.12
+- Webcam
+- Windows, macOS, or Linux
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/pattssun/air-dj.git
-   cd air-dj
-   ```
+---
 
-2. **Create virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   ```
+## 🚀 Installation
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Clone the repository
 
-#### **Windows**
+```bash
+git clone https://github.com/yourusername/air-dj.git
+cd air-dj
+```
 
-1. **Clone the repository:**
-   ```cmd
-   git clone https://github.com/pattssun/air-dj.git
-   cd air-dj
-   ```
+---
 
-2. **Create virtual environment:**
-   ```cmd
-   python -m venv venv
-   venv\Scripts\activate
-   ```
+### 2. Create a Virtual Environment
 
-3. **Install dependencies:**
-   ```cmd
-   pip install -r requirements.txt
-   ```
+#### macOS / Linux
 
-### **Launch Air DJ**
+```bash
+python3 -m venv venv
+```
 
-#### **macOS / Linux**
+#### Windows
+
+```cmd
+python -m venv venv
+```
+
+---
+
+### 3. Activate the Virtual Environment
+
+#### macOS / Linux
+
 ```bash
 source venv/bin/activate
-python air_dj.py
 ```
 
-#### **Windows**
+#### Windows
+
 ```cmd
 venv\Scripts\activate
-python air_dj.py
 ```
 
-## **Song Selection**
+---
 
-### **Add Your Music**
+### 4. Install Dependencies
 
-Air DJ works with stem-separated audio files (vocals + instrumental tracks).
+```bash
+pip install -r requirements.txt
+```
 
-**[Complete Music Setup Guide →](songs/MUSIC_SETUP.md)**
+---
 
-**Quick Start:**
-1. **Try it immediately**: Run `python air_dj.py` - includes 2 copyright-free example songs!
-2. **Add your music**: Get stem-separated songs from [fadr.com](https://fadr.com/stems) (free AI separation)
-3. Create folders in `songs/` directory: `Artist - Song Name/`
-4. Add required files: `Vocals - Song.mp3` and `Instrumental - Song.mp3`
+### 5. Run the Project
 
-### **Interactive Selection (Default)**
 ```bash
 python air_dj.py
 ```
-Choose your songs from a numbered menu. **BPM sync enabled by default.**
 
-### **Other Options**
-```bash
-python air_dj.py --default    # Skip song selection, use preset songs
-python air_dj.py --unsync     # Disable BPM synchronization between decks
-```
+---
 
-## **Licensing**
-Air DJ is available under **[MIT License](LICENSE)**
+## 📷 How It Works
+
+Air DJ uses MediaPipe hand tracking and OpenCV computer vision to detect hand gestures through a webcam feed. These gestures are mapped to DJ controls such as play, pause, and vocal/instrumental toggling in real time.
