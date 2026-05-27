@@ -33,6 +33,7 @@ except ImportError:
     print("Audio analysis libraries not available. Install with: pip install librosa scipy")
     AUDIO_ANALYSIS_AVAILABLE = False
 
+
 @dataclass
 class ControllerButton:
     """Represents a clickable button on the DJ controller"""
@@ -87,6 +88,37 @@ class Track:
     key: str
     stems: Dict[str, str]  # stem_type -> file_path
     album_artwork: Optional[str] = None  # Path to album artwork PNG
+
+class DisplayStateWriter:
+    """Persists the two-line LCD state for the display process/firmware bridge."""
+
+    def __init__(self, path: str = "air_dj_display_state.json"):
+        self.path = path
+        self._last_payload = None
+
+    def write(self, deck1_title: str, deck2_title: str, deck1_playing: bool, deck2_playing: bool):
+        payload = {
+            "line1": deck1_title or "Deck 1",
+            "line2": deck2_title or "Deck 2",
+            "deck1_title": deck1_title or "",
+            "deck2_title": deck2_title or "",
+            "deck1_playing": bool(deck1_playing),
+            "deck2_playing": bool(deck2_playing),
+            "both_playing": bool(deck1_playing and deck2_playing),
+            "flash_red_background": bool(deck1_playing and deck2_playing),
+            "updated_at": time.time(),
+        }
+
+        stable_payload = {key: value for key, value in payload.items() if key != "updated_at"}
+        if stable_payload == self._last_payload:
+            return
+
+        temp_path = f"{self.path}.tmp"
+        with open(temp_path, "w", encoding="utf-8") as state_file:
+            json.dump(payload, state_file, ensure_ascii=False, indent=2)
+            state_file.write("\n")
+        os.replace(temp_path, self.path)
+        self._last_payload = stable_payload
 
 @dataclass
 class WaveformData:
@@ -1736,6 +1768,7 @@ class DJController:
         
         # Store selected songs
         self.selected_songs = selected_songs
+        self.display_state = DisplayStateWriter()
         
         # Initialize components
         self.hand_tracker = HandTracker()
@@ -1774,6 +1807,7 @@ class DJController:
         self.current_pinches = []
         self.deck1_track = None
         self.deck2_track = None
+        self.publish_display_state()
         
         # Jog wheel rotation states
         self.deck1_jog_rotation = 0.0  # Current rotation angle in degrees
@@ -1926,6 +1960,17 @@ class DJController:
         self.crossfader = Fader("Crossfader", center_x - crossfader_width // 2, crossfader_y, crossfader_width, 30, value=0.5)
         
         # EQ and effects knobs removed - cleaner DJ controller layout
+
+    def publish_display_state(self):
+        """Write the current track titles and playback state for the LCD display."""
+        deck1_title = self.deck1_track.name if self.deck1_track else ""
+        deck2_title = self.deck2_track.name if self.deck2_track else ""
+        self.display_state.write(
+            deck1_title,
+            deck2_title,
+            self.audio_engine.deck1_is_playing,
+            self.audio_engine.deck2_is_playing,
+        )
     
     def handle_button_interaction(self, button: ControllerButton, deck: int = 0):
         """Handle button press interactions"""
@@ -1946,6 +1991,7 @@ class DJController:
                 self.jog_wheel_2.current_angle = 0.0
                 # Reset album artwork rotation to default position (0 degrees)
                 self.deck2_artwork_rotation = 0.0
+            self.publish_display_state()
         
         elif button.name == "Play/Pause":
             if button.button_type == "toggle":
@@ -1975,6 +2021,7 @@ class DJController:
                         self.audio_engine.play_deck(2)
                     else:
                         self.audio_engine.pause_deck(2)
+                self.publish_display_state()
         
         elif button.name == "Vocal":
             if button.button_type == "toggle":
@@ -3707,6 +3754,7 @@ class DJController:
             # Ensure audio engine reflects these settings properly
             self.audio_engine.set_stem_volume(1, "vocals", 1.0)
             self.audio_engine.set_stem_volume(1, "instrumental", 1.0)
+            self.publish_display_state()
         elif deck == 2:
             self.deck2_track = track
             self.audio_engine.load_track(2, track)
@@ -3722,6 +3770,7 @@ class DJController:
             # Ensure audio engine reflects these settings properly
             self.audio_engine.set_stem_volume(2, "vocals", 1.0)
             self.audio_engine.set_stem_volume(2, "instrumental", 1.0)
+            self.publish_display_state()
     
     def _load_album_artwork(self, deck: int, track):
         """Load and prepare album artwork for jog wheel display"""
@@ -3834,6 +3883,7 @@ class DJController:
                 
                 # Update album artwork rotation based on playback state (like real DJ controllers)
                 self.update_album_artwork_rotation()
+                self.publish_display_state()
                 
                 # Update smooth animations for 60fps synchronization
                 if hasattr(self, 'animation_controller') and self.animation_controller:
