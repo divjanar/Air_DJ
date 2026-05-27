@@ -2,6 +2,8 @@
 
 Air DJ is a gesture-controlled DJ application that lets users control music using hand movements through a webcam. The project combines computer vision, real-time interaction, and audio controls to create a hands-free DJ experience.
 
+https://youtu.be/nUxXKt4A_b4?si=9zYOzgNk49FzyWnt
+
 ---
 
 ## ✨ Features
