@@ -4,6 +4,8 @@ Air DJ is a gesture-controlled DJ application that lets users control music usin
 
 https://youtu.be/nUxXKt4A_b4?si=9zYOzgNk49FzyWnt
 
+https://youtu.be/iQUGrcBfwXY
+
 ---
 
 ## ✨ Features
